@@ -1,9 +1,3 @@
-# 🦀 Training Session: Rust Types & Values
-
-**Goal:** Understanding the building blocks of Rust.
-
----
-
 ## Hello World
 **The Entry Point**
 
