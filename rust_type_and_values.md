@@ -81,20 +81,35 @@ graph LR
 ```rust
 let a: i16 = 30_000;
 let b: i16 = 30_000;
-let c = a + b; // Overflow!
+let c = a + b; // Result is 60,000... but i16 max is 32,767!
 ```
 
-### Rust's Safety Shield:
-1.  **Debug Mode**: The program will **panic** (crash with an error).
-2.  **Release Mode**: The value will **wrap around** (standard C behavior).
-3.  **Explicit Handling**: You can use methods like `.saturating_add()` or `.checked_add()`.
+### 1. The Dual Behavior (Safety vs. Performance)
+Rust's behavior changes based on your build profile:
 
+*   **Debug Mode (`cargo run`):** Rust adds runtime checks. If an overflow occurs, the program **panics** (crashes). This helps catch logic bugs during development.
+*   **Release Mode (`cargo run --release`):** Checks are removed for speed. The value **wraps around** (e.g., `32,767 + 1` becomes `-32,768`).
+
+### 2. Explicit Handling Methods
+When you *expect* possible overflow, don't use `+`. Use these built-in methods:
+
+| Method | Outcome | Use Case |
+| :--- | :--- | :--- |
+| `.wrapping_add()` | Wraps around | Consistent behavior across all modes. |
+| `.saturating_add()` | Caps at Max/Min | UI elements (e.g., volume slider at 100%). |
+| `.checked_add()` | Returns `Option` | Critical math where you must handle failure. |
+| `.overflowing_add()` | Returns `(val, bool)` | When you need the result + an overflow flag. |
+
+### 3. Logic Flow:
 ```mermaid
 graph TD
-    A[Calculation] --> B{Overflow?}
-    B -- Yes (Debug) --> C[Panic/Crash]
-    B -- Yes (Release) --> D[Two's Complement Wrap]
+    A[Calculation: a + b] --> B{Overflow?}
+    B -- Yes (Debug Build) --> C[Panic / Crash]
+    B -- Yes (Release Build) --> D[Two's Complement Wrap]
     B -- No --> E[Normal Result]
+    
+    style C fill:#f96,stroke:#333
+    style D fill:#69f,stroke:#333
 ```
 
 ---
