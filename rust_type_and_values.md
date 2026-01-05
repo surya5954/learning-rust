@@ -1,11 +1,10 @@
 # 🦀 Training Session: Rust Types & Values
 
 **Goal:** Understanding the building blocks of Rust.
-**Duration:** 40 Minutes
 
 ---
 
-## Slide 1: Hello World (5 min)
+## Hello World
 **The Entry Point**
 
 ```rust
@@ -22,7 +21,7 @@ fn main() {
 
 ---
 
-## Slide 2: Variables & Immutability (5 min)
+## Variables & Immutability
 **Safety by Default**
 
 In Rust, variables are **immutable** by default. You must be explicit about change.
@@ -43,7 +42,7 @@ fn main() {
 
 ---
 
-## Slide 3: Scalar Types - Integers (5 min)
+## Scalar Types - Integers
 **Fixed Widths for Performance**
 
 Rust gives you fine-grained control over memory.
@@ -67,7 +66,7 @@ graph LR
 
 ---
 
-## Slide 4: Scalar Types - Floats, Chars & Bools (5 min)
+## Scalar Types - Floats, Chars & Bools
 
 *   **Floating Point**: `f32` (single precision) and `f64` (double precision).
 *   **Char**: `'a'`, `'α'`, `'∞'`. **Crucial:** A `char` in Rust is **4 bytes** (32 bits) because it represents a Unicode Scalar Value, not just ASCII.
@@ -75,7 +74,7 @@ graph LR
 
 ---
 
-## Slide 5: Arithmetic & Overflow (3 min)
+## Arithmetic & Overflow
 **What happens when things go wrong?**
 
 ```rust
@@ -114,7 +113,7 @@ graph TD
 
 ---
 
-## Slide 6: Type Inference (3 min)
+## Type Inference
 **The Compiler is Smart**
 
 You don't always have to type out the types. The compiler looks at how you *use* the variable.
@@ -134,7 +133,7 @@ fn main() {
 
 ---
 
-## Slide 7: Exercise - Fibonacci (15 min)
+## Exercise - Fibonacci
 **Putting it all together**
 
 **Goal:** Write a function `fib(n)` that calculates the nth Fibonacci number.
@@ -170,7 +169,6 @@ Explain that a loop is more memory efficient because it doesn't grow the stack.
 ---
 
 ## Pro-Tips for the Instructor:
-*   **Uncommenting code**: During Slide 2, show them the compiler error when trying to mutate an immutable variable. Rust errors are "teachers," not just "warnings."
+*   **Uncommenting code**: During the "Variables & Immutability" section, show them the compiler error when trying to mutate an immutable variable. Rust errors are "teachers," not just "warnings."
 *   **Underscores**: Mention that `1_000_000` is valid syntax for readability.
 *   **The `{integer}` error**: Explain that if they see `{integer}` in an error message, it means the compiler knows it's a number but hasn't decided which size yet.
-
