@@ -1,0 +1,174 @@
+# 🦀 Training Session: Rust Types & Values
+
+**Goal:** Understanding the building blocks of Rust.
+
+---
+
+## Hello World
+**The Entry Point**
+
+```rust
+fn main() {
+    println!("Hello 🦀!");
+}
+```
+
+### Key Takeaways for Newbies:
+*   **`fn`**: Keyword to define a function.
+*   **`main`**: The mandatory starting point of every Rust program.
+*   **`!`**: This indicates a **Macro**, not a function. Why? Because `println!` handles a variable number of arguments (which Rust functions don't support via overloading).
+*   **Unicode**: Rust strings are UTF-8 by default. Yes, you can use emojis!
+
+---
+
+## Variables & Immutability
+**Safety by Default**
+
+In Rust, variables are **immutable** by default. You must be explicit about change.
+
+```rust
+fn main() {
+    let x: i32 = 10; 
+    // x = 20; <--- This would fail to compile!
+    
+    let mut y = 5;   // 'mut' makes it changeable
+    y = 10;          // This works!
+}
+```
+
+### Why this matters:
+*   Prevents accidental data corruption.
+*   Makes code easier to reason about (if it's not `mut`, it never changes).
+
+---
+
+## Scalar Types - Integers
+**Fixed Widths for Performance**
+
+Rust gives you fine-grained control over memory.
+
+| Type | Description | Width |
+| :--- | :--- | :--- |
+| `i8`, `i16`, `i32`, `i64`, `i128` | Signed Integers | 8 to 128 bits |
+| `u8`, `u16`, `u32`, `u64`, `u128` | Unsigned Integers | 8 to 128 bits |
+| `isize`, `usize` | Pointer-sized | 32 or 64 bits (arch dependent) |
+
+### Memory Visualization:
+
+```mermaid
+graph LR
+    subgraph "Integer Widths"
+    A[u8 / i8] ---|8 bits| B(1 Byte)
+    C[u32 / i32] ---|32 bits| D(4 Bytes)
+    E[u64 / i64] ---|64 bits| F(8 Bytes)
+    end
+```
+
+---
+
+## Scalar Types - Floats, Chars & Bools
+
+*   **Floating Point**: `f32` (single precision) and `f64` (double precision).
+*   **Char**: `'a'`, `'α'`, `'∞'`. **Crucial:** A `char` in Rust is **4 bytes** (32 bits) because it represents a Unicode Scalar Value, not just ASCII.
+*   **Bool**: `true` or `false` (1 byte).
+
+---
+
+## Arithmetic & Overflow
+**What happens when things go wrong?**
+
+```rust
+let a: i16 = 30_000;
+let b: i16 = 30_000;
+let c = a + b; // Result is 60,000... but i16 max is 32,767!
+```
+
+### 1. The Dual Behavior (Safety vs. Performance)
+Rust's behavior changes based on your build profile:
+
+*   **Debug Mode (`cargo run`):** Rust adds runtime checks. If an overflow occurs, the program **panics** (crashes). This helps catch logic bugs during development.
+*   **Release Mode (`cargo run --release`):** Checks are removed for speed. The value **wraps around** (e.g., `32,767 + 1` becomes `-32,768`).
+
+### 2. Explicit Handling Methods
+When you *expect* possible overflow, don't use `+`. Use these built-in methods:
+
+| Method | Outcome | Use Case |
+| :--- | :--- | :--- |
+| `.wrapping_add()` | Wraps around | Consistent behavior across all modes. |
+| `.saturating_add()` | Caps at Max/Min | UI elements (e.g., volume slider at 100%). |
+| `.checked_add()` | Returns `Option` | Critical math where you must handle failure. |
+| `.overflowing_add()` | Returns `(val, bool)` | When you need the result + an overflow flag. |
+
+### 3. Logic Flow:
+```mermaid
+graph TD
+    A[Calculation: a + b] --> B{Overflow?}
+    B -- Yes (Debug Build) --> C[Panic / Crash]
+    B -- Yes (Release Build) --> D[Two's Complement Wrap]
+    B -- No --> E[Normal Result]
+    
+    style C fill:#f96,stroke:#333
+    style D fill:#69f,stroke:#333
+```
+
+---
+
+## Type Inference
+**The Compiler is Smart**
+
+You don't always have to type out the types. The compiler looks at how you *use* the variable.
+
+```rust
+fn takes_u32(x: u32) { /* ... */ }
+
+fn main() {
+    let x = 10;    // Compiler thinks: "Maybe i32?"
+    takes_u32(x);  // Compiler sees this: "Ah, x must be u32!"
+}
+```
+
+**Defaults:**
+*   Integers default to `i32`.
+*   Floats default to `f64`.
+
+---
+
+## Exercise - Fibonacci
+**Putting it all together**
+
+**Goal:** Write a function `fib(n)` that calculates the nth Fibonacci number.
+
+### Recursive Solution (The "Simple" way):
+```rust
+fn fib(n: u32) -> u32 {
+    if n < 2 {
+        return n;
+    } else {
+        return fib(n - 1) + fib(n - 2);
+    }
+}
+```
+
+### Discussion Points:
+1.  **Overflow**: Fibonacci grows fast! `u32` will panic around `n = 47`.
+2.  **Performance**: Show them the difference between the recursive "tree" and a simple loop.
+
+```mermaid
+graph TD
+    subgraph "Recursive Tree (Slow)"
+    F4[fib 4] --> F3[fib 3]
+    F4 --> F2[fib 2]
+    F3 --> F2a[fib 2]
+    F3 --> F1[fib 1]
+    end
+```
+
+### Iterative Solution (The "Pro" way):
+Explain that a loop is more memory efficient because it doesn't grow the stack.
+
+---
+
+## Pro-Tips for the Instructor:
+*   **Uncommenting code**: During the "Variables & Immutability" section, show them the compiler error when trying to mutate an immutable variable. Rust errors are "teachers," not just "warnings."
+*   **Underscores**: Mention that `1_000_000` is valid syntax for readability.
+*   **The `{integer}` error**: Explain that if they see `{integer}` in an error message, it means the compiler knows it's a number but hasn't decided which size yet.
